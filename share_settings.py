@@ -1,7 +1,7 @@
 from datetime import date
 
 class Settings():
-    """contains all the settings for top_trumps game"""
+    """contains all the settings for stock program"""
     def __init__(self):
         """Initialise the settings""" 
         '''
