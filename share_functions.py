@@ -103,12 +103,12 @@ def calc_ema(s,df_close_prices):
 
 def save_stocks(df_close_prices):
     """Saves data to excel usng xlsxwriter as the engine"""
-    writer = pd.ExcelWriter('/users/neald/desktop/share_test.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('share_test.xlsx', engine='xlsxwriter')
     df_close_prices.to_excel(writer, sheet_name='Sheet1')
 
 def load_from_file():
     """Load data from file"""
-    data = pd.ExcelFile('/users/neald/desktop/share_test.xlsx')
+    data = pd.ExcelFile('share_test.xlsx')
     df_close_prices = data.parse('Sheet1')
     return df_close_prices
 
