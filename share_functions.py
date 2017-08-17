@@ -3,6 +3,8 @@ import pandas as pd
 import pandas_datareader.data as wb
 import numpy as np 
 
+#this is a test line
+
 s = Settings()
 
 def options(df_close_prices):
