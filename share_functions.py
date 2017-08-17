@@ -6,6 +6,7 @@ import numpy as np
 #this is a test line
 
 s = Settings()
+df_close_prices = 0
 
 def options(df_close_prices):
     """Startup options"""
@@ -13,10 +14,10 @@ def options(df_close_prices):
         #print options
         try:
             print("\n\nSelect from one of the following options...\n"
-            "1. See/Change settings\n"
-            "2. Plot stock calcs\n"
-            "3. TBC\n"
-            "4. TBC\n"
+            "1. load/download stocks\n"
+            "2. View data\n"
+            "3. See/Change settings\n"
+            "4. Plot stock calcs\n"
             "5. Quit\n"
             )
             #locks to selection of 0-5
@@ -28,14 +29,32 @@ def options(df_close_prices):
         
         #once entry is acceptible, run the option
         else:
-            if selection == 1: #see/change settings
-                change_settings(s)
-            elif selection == 2: #plot selected stock
-                plot_stock(df_close_prices)   
+            if selection == 1: 
+                while True:
+                    try:
+                        print('\nDo you want to' 
+                        '\n1. Load last used data'  
+                        '\n2. Download new data')
+                        dls = 0
+                        while dls not in (range(1,3)):
+                            dls = int(input('> '))
+                    except (ValueError, NameError, SyntaxError):
+                        print("Select '1' or '2'\n>")
+                    else:
+                        if dls ==1:
+                            print('Loading dataframe from file')
+                            df_close_prices = load_from_file()
+                            break
+                        elif dls ==2:
+                            print('Downloading latest prices to dataframe')
+                            df_close_prices = get_stocks(s)
+                            break        
+            elif selection == 2: 
+                print(df_close_prices)
             elif selection == 3: 
-                options(df_close_prices)
+                change_settings(s)   
             elif selection == 4: 
-                options(df_close_prices)
+                plot_stock(df_close_prices)
             elif selection == 5:
                 break
 
@@ -86,6 +105,12 @@ def save_stocks(df_close_prices):
     """Saves data to excel usng xlsxwriter as the engine"""
     writer = pd.ExcelWriter('/users/neald/desktop/share_test.xlsx', engine='xlsxwriter')
     df_close_prices.to_excel(writer, sheet_name='Sheet1')
+
+def load_from_file():
+    """Load data from file"""
+    data = pd.ExcelFile('/users/neald/desktop/share_test.xlsx')
+    df_close_prices = data.parse('Sheet1')
+    return df_close_prices
 
 def stock_calcs(stock, df_close_prices):
     """For a selected stock, filter columns for plotting"""
