@@ -1,8 +1,6 @@
 from share_settings import Settings
 import urllib.request
 import json
-import pandas as pd 
-
 s = Settings()
 
 class GoogleFinanceAPI:
