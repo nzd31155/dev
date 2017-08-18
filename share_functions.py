@@ -1,4 +1,5 @@
 from share_settings import Settings
+import latest_prices as lp
 import pandas as pd
 import pandas_datareader.data as wb
 import numpy as np 
@@ -21,10 +22,10 @@ def options(df_close_prices):
             "5. In progress - download todays current prices\n"
             "6. Quit\n"
             )
-            #locks to selection of 0-5
+            
             selection = 0
             while selection not in (range(1,7)):
-                selection = int(input("type a number from 1-5\n> "))
+                selection = int(input("type a number from 1-6\n> "))
         except (ValueError, NameError, SyntaxError):
             print("Type a number from 1-6\n> ")
         
@@ -39,17 +40,17 @@ def options(df_close_prices):
             elif selection == 4: 
                 plot_stock(df_close_prices)
             elif selection == 5:
-                options(df_close_prices)
+                get_latest_prices(df_close_prices,s)
             elif selection == 6:
                 break
 
 
-def dl_stocks(s):
+def dl_stocks(s,start_d,end_d):
     """Downloads stock prices from google"""
     #creates data frame using share tickers, source, date range
     print('Downloading stocks')
     stock_list = [s.symbols]
-    df_temp = wb.DataReader(s.symbols, 'google', s.st_date, s.ed_date)
+    df_temp = wb.DataReader(s.symbols, 'google', start_d, end_d)
     return df_temp
 
 def clean_stocks(field, df_temp):
@@ -98,7 +99,7 @@ def save_stocks(df_close_prices):
 def get_stocks(s):
     """embeds >1 functn to download, format and save"""
     #download stocks
-    df_temp = dl_stocks(s)
+    df_temp = dl_stocks(s,s.st_date,s.ed_date)
     #Limit to just close prices in single DF
     df_close_prices = clean_stocks('Close',df_temp)
     #calculate the 3 EMAs
@@ -139,6 +140,15 @@ def dl_or_load():
                 df_close_prices = get_stocks(s)
                 return df_close_prices
                 break        
+
+def get_latest_prices(df_close_prices,s):
+    """downloads todays latest prices - use before close"""
+    if s.ed_date in df_close_prices.index:
+        print('Yes')
+    else:
+        df_close_prices.loc[s.ed_date]=lp.get_lp(s)
+"""This isn't working yet as it's trying to add the new prices but hasn't added the extra calculated columns so there's a mismatch in what's being added and what's already there in count of columns"""
+
 
 def chart_filtering(stock, df_close_prices):
     """For a selected stock, filter columns for plotting"""
