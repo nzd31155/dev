@@ -59,21 +59,25 @@ def clean_stocks(field, df_temp):
     print('Cleaning stocks')
     cleanData = df_temp.ix[field]
     df_close_prices=pd.DataFrame(cleanData)
-    #print(df_close_prices.iloc[0])
     return df_close_prices
+
+def get_latest_prices(df_close_prices,s):
+    """downloads todays latest prices - use before close"""
+    print('Downloading todays current prices')
+    df_close_prices.ix[s.ed_date]=lp.get_lp(s)
 
 def calc_ema(s,df_close_prices):
     """ Calculates EMA for stocks"""
     ema_values = s.EMA_values
     for ema_value in ema_values:
-        print('\nCalculating EMA value = ' +str(ema_value)) 
+        print('Calculating EMA value = ' +str(ema_value)) 
         for stock in s.symbols:
             tag = (stock + '_EMA_' +str(ema_value))
-            print(tag)
             df_close_prices[tag] = df_close_prices[stock].ewm(span=ema_value, min_periods=ema_value, adjust=False).mean()
         
 def EMA_dw_trigger(s,df_close_prices):
     """downward trigger"""
+    print('Calculating down trigger')
     for stock in s.symbols:    
         x = (stock +'_EMA_' +str(s.EMA_Sho))
         y = (stock +'_EMA_' +str(s.EMA_Mid))
@@ -83,18 +87,21 @@ def EMA_dw_trigger(s,df_close_prices):
         
 def EMA_up_trigger(s,df_close_prices):
     """recovery trigger"""
+    print('Calculating recovery trigger')
+
     for stock in s.symbols:    
         x = (stock +'_EMA_' +str(s.EMA_Sho))
         y = (stock +'_EMA_' +str(s.EMA_Mid))
         z = (stock +'_EMA_' +str(s.EMA_Lon))
         tag = (stock + 'TrigU')
         df_close_prices[tag] = np.where(df_close_prices[x]>df_close_prices[y], np.where(df_close_prices[y]>df_close_prices[z],True,False),False)
-        print(df_close_prices)
-
+        
 def save_stocks(df_close_prices):
     """Saves data to excel usng xlsxwriter as the engine"""
     writer = pd.ExcelWriter('share_test.xlsx', engine='xlsxwriter')
     df_close_prices.to_excel(writer, sheet_name='Sheet1')
+    print('File saved')
+
 
 def get_stocks(s):
     """embeds >1 functn to download, format and save"""
@@ -102,6 +109,8 @@ def get_stocks(s):
     df_temp = dl_stocks(s,s.st_date,s.ed_date)
     #Limit to just close prices in single DF
     df_close_prices = clean_stocks('Close',df_temp)
+    #add in todays pricing
+    df_close_prices.ix[s.ed_date]=lp.get_lp(s)
     #calculate the 3 EMAs
     calc_ema(s,df_close_prices)
     #Calculates triggers
@@ -109,6 +118,7 @@ def get_stocks(s):
     EMA_up_trigger(s,df_close_prices)
     #save copy to Excel
     save_stocks(df_close_prices)
+    print('Completed')
     return df_close_prices
 
 def load_from_file():
@@ -139,16 +149,7 @@ def dl_or_load():
                 print('Downloading latest prices to dataframe')
                 df_close_prices = get_stocks(s)
                 return df_close_prices
-                break        
-
-def get_latest_prices(df_close_prices,s):
-    """downloads todays latest prices - use before close"""
-    if s.ed_date in df_close_prices.index:
-        print('Yes')
-    else:
-        df_close_prices.loc[s.ed_date]=lp.get_lp(s)
-"""This isn't working yet as it's trying to add the new prices but hasn't added the extra calculated columns so there's a mismatch in what's being added and what's already there in count of columns"""
-
+                break          
 
 def chart_filtering(stock, df_close_prices):
     """For a selected stock, filter columns for plotting"""

@@ -20,9 +20,11 @@ def get_lp(s):
     """gets latest prices from google"""
     sl = []  
     for stock in s.symbols:        
+        #creates a list of latest stock prices
         c = GoogleFinanceAPI()
         quote = c.get(stock,"LON")
-        #creates a list of latest stock prices
-        sl.append((quote['l']))
-    print(len(sl))
+        #changes string to integer and removes ','
+        x = (quote['l']).replace(',','')
+        x = float(x)
+        sl.append(x)
     return sl

@@ -26,5 +26,7 @@ class Settings():
         self.st_date = date(2016,1,1)
         self.ed_date = date.today().isoformat()
         
+        #TimeLag - gap between down trigger and up trigger
+        ts=1
 
         
