@@ -1,7 +1,7 @@
 from datetime import date
 
 class Settings():
-    """contains all the settings for top_trumps game"""
+    """contains all the settings for stock program"""
     def __init__(self):
         """Initialise the settings""" 
         '''
@@ -26,5 +26,7 @@ class Settings():
         self.st_date = date(2016,1,1)
         self.ed_date = date.today().isoformat()
         
+        #TimeLag - gap between down trigger and up trigger
+        ts=1
 
         
