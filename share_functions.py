@@ -64,7 +64,7 @@ def clean_stocks(field, df_temp):
 def get_latest_prices(df_close_prices,s):
     """downloads todays latest prices - use before close"""
     print('Downloading todays current prices')
-    df_close_prices.ix[s.ed_date]=lp.get_lp(s)
+    df_close_prices.ix[s.date_now]=lp.get_lp(s)
 
 def calc_ema(s,df_close_prices):
     """ Calculates EMA for stocks"""
@@ -110,7 +110,7 @@ def get_stocks(s):
     #Limit to just close prices in single DF
     df_close_prices = clean_stocks('Close',df_temp)
     #add in todays pricing
-    df_close_prices.ix[s.ed_date]=lp.get_lp(s)
+    df_close_prices.ix[s.date_now]=lp.get_lp(s)
     #calculate the 3 EMAs
     calc_ema(s,df_close_prices)
     #Calculates triggers

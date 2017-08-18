@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 class Settings():
     """contains all the settings for stock program"""
@@ -25,6 +25,8 @@ class Settings():
         #date range for pandas datatable
         self.st_date = date(2016,1,1)
         self.ed_date = date.today().isoformat()
+        self.date_now = datetime.now()
+
         
         #TimeLag - gap between down trigger and up trigger
         ts=1
