@@ -75,27 +75,29 @@ def calc_ema(s,df_close_prices):
             tag = (stock + '_EMA_' +str(ema_value))
             df_close_prices[tag] = df_close_prices[stock].ewm(span=ema_value, min_periods=ema_value, adjust=False).mean()
         
-def EMA_dw_trigger(s,df_close_prices):
-    """downward trigger"""
-    print('Calculating down trigger')
+def EMA_trigger(s,df_close_prices):
+    """Calculates triggers"""
+    print('Calculating up/down triggers and adds to df')
     for stock in s.symbols:    
         x = (stock +'_EMA_' +str(s.EMA_Sho))
         y = (stock +'_EMA_' +str(s.EMA_Mid))
         z = (stock +'_EMA_' +str(s.EMA_Lon))
         tag = (stock + 'TrigD')
-        df_close_prices[tag] = np.where(df_close_prices[x]<df_close_prices[y], np.where(df_close_prices[y]<df_close_prices[z],True,False),False)
+        tag2 = (stock + 'TrigU')
+        df_close_prices[tag] = np.where(df_close_prices[x]<df_close_prices[y], np.where(df_close_prices[y]<df_close_prices[z],1,0),False)
+        df_close_prices[tag2] = np.where(df_close_prices[x]>df_close_prices[y], np.where(df_close_prices[y]>df_close_prices[z],1,0),False)
         
-def EMA_up_trigger(s,df_close_prices):
-    """recovery trigger"""
-    print('Calculating recovery trigger')
+def buy_stock(s,df_close_prices):
+    """Buy stocks that meet this criteria"""
+    print("Searching for a day's winners")
+    for stock in s.symbols:
+        tag = (stock + 'BUY')
+        u_tag = (stock + 'TrigU')
+        d_tag = (stock + 'TrigD')
+        x = df_close_prices[u_tag] +  df_close_prices[d_tag].shift(s.ts)
+        df_close_prices[tag] = x
+        
 
-    for stock in s.symbols:    
-        x = (stock +'_EMA_' +str(s.EMA_Sho))
-        y = (stock +'_EMA_' +str(s.EMA_Mid))
-        z = (stock +'_EMA_' +str(s.EMA_Lon))
-        tag = (stock + 'TrigU')
-        df_close_prices[tag] = np.where(df_close_prices[x]>df_close_prices[y], np.where(df_close_prices[y]>df_close_prices[z],True,False),False)
-        
 def save_stocks(df_close_prices):
     """Saves data to excel usng xlsxwriter as the engine"""
     writer = pd.ExcelWriter('share_test.xlsx', engine='xlsxwriter')
@@ -114,8 +116,9 @@ def get_stocks(s):
     #calculate the 3 EMAs
     calc_ema(s,df_close_prices)
     #Calculates triggers
-    EMA_dw_trigger(s,df_close_prices)
-    EMA_up_trigger(s,df_close_prices)
+    EMA_trigger(s,df_close_prices)
+    #Identifies the stocks to buy
+    buy_stock(s,df_close_prices)
     #save copy to Excel
     save_stocks(df_close_prices)
     print('Completed')
