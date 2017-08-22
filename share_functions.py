@@ -84,18 +84,29 @@ def EMA_trigger(s,df_close_prices):
         z = (stock +'_EMA_' +str(s.EMA_Lon))
         tag = (stock + 'TrigD')
         tag2 = (stock + 'TrigU')
-        df_close_prices[tag] = np.where(df_close_prices[x]<df_close_prices[y], np.where(df_close_prices[y]<df_close_prices[z],1,0),False)
-        df_close_prices[tag2] = np.where(df_close_prices[x]>df_close_prices[y], np.where(df_close_prices[y]>df_close_prices[z],1,0),False)
+
+        #Calculating the triggers
+        up = np.where(df_close_prices[x]<df_close_prices[y], np.where(df_close_prices[y]<df_close_prices[z],1,False),False)
+        down = np.where(df_close_prices[x]>df_close_prices[y], np.where(df_close_prices[y]>df_close_prices[z],1,False),False)
         
+        #adding to the dataframe
+        df_close_prices[tag] = up
+        df_close_prices[tag2] = down
+
+
 def buy_stock(s,df_close_prices):
     """Buy stocks that meet this criteria"""
     print("Searching for a day's winners")
+    reco_stocks = {}
     for stock in s.symbols:
         tag = (stock + 'BUY')
         u_tag = (stock + 'TrigU')
         d_tag = (stock + 'TrigD')
         x = df_close_prices[u_tag] +  df_close_prices[d_tag].shift(s.ts)
+        y = df_close_prices.loc[s.date_now,u_tag] +  df_close_prices.loc[(s.date_yst),d_tag]
+        reco_stocks[stock]= y   #dictionary for buys and recommendeds - is the calc working? are there any 0's if scaling up to 100 stocks? can output the results into a printout of 'watches' and buys?
         df_close_prices[tag] = x
+    print(reco_stocks)
         
 
 def save_stocks(df_close_prices):
