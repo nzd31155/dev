@@ -6,6 +6,6 @@ import share_functions as sf
 
 
 
-pd_a = sf.load_from_file()
-
+pd1 = sf.load_from_file()
+pd2 = pd1.
 print(pd_a)

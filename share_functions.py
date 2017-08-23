@@ -19,7 +19,7 @@ def options(df_close_prices):
             "2. View data\n"
             "3. See/Change settings\n"
             "4. Plot stock calcs\n"
-            "5. In progress - download todays current prices\n"
+            "5. List watch/buy stocks\n"
             "6. Quit\n"
             )
             
@@ -40,7 +40,7 @@ def options(df_close_prices):
             elif selection == 4: 
                 plot_stock(df_close_prices)
             elif selection == 5:
-                get_latest_prices(df_close_prices,s)
+                rec_stocks(s,df_close_prices)
             elif selection == 6:
                 break
 
@@ -82,32 +82,57 @@ def EMA_trigger(s,df_close_prices):
         x = (stock +'_EMA_' +str(s.EMA_Sho))
         y = (stock +'_EMA_' +str(s.EMA_Mid))
         z = (stock +'_EMA_' +str(s.EMA_Lon))
-        tag = (stock + 'TrigD')
-        tag2 = (stock + 'TrigU')
+        tagd = (stock + 'TrigD')
+        tagu = (stock + 'TrigU')
 
         #Calculating the triggers
-        up = np.where(df_close_prices[x]<df_close_prices[y], np.where(df_close_prices[y]<df_close_prices[z],1,False),False)
         down = np.where(df_close_prices[x]>df_close_prices[y], np.where(df_close_prices[y]>df_close_prices[z],1,False),False)
+        up = np.where(df_close_prices[x]<df_close_prices[y], np.where(df_close_prices[y]<df_close_prices[z],10,False),False)
         
         #adding to the dataframe
-        df_close_prices[tag] = up
-        df_close_prices[tag2] = down
-
+        df_close_prices[tagd] = down
+        df_close_prices[tagu] = up
+        
 
 def buy_stock(s,df_close_prices):
     """Buy stocks that meet this criteria"""
     print("Searching for a day's winners")
-    reco_stocks = {}
     for stock in s.symbols:
         tag = (stock + 'BUY')
         u_tag = (stock + 'TrigU')
         d_tag = (stock + 'TrigD')
+        #Calculates Reco column for df
         x = df_close_prices[u_tag] +  df_close_prices[d_tag].shift(s.ts)
-        y = df_close_prices.loc[s.date_now,u_tag] +  df_close_prices.loc[(s.date_yst),d_tag]
-        reco_stocks[stock]= y   #dictionary for buys and recommendeds - is the calc working? are there any 0's if scaling up to 100 stocks? can output the results into a printout of 'watches' and buys?
         df_close_prices[tag] = x
-    print(reco_stocks)
-        
+
+def rec_stocks(s,df_close_prices):
+    """Calculates watch/buy stocks"""
+    reco_stocks = {}
+    watch = []
+    buy = []
+    for stock in s.symbols:
+        tag = (stock + 'BUY')
+        u_tag = (stock + 'TrigU')
+        d_tag = (stock + 'TrigD')
+        #Calculates Reco dict for today
+        print(df_close_prices)
+        print(s.date_now,s.date_yst)
+        up = df_close_prices.loc[s.date_now,u_tag]
+        down = df_close_prices.loc[(s.date_yst),d_tag]
+        y = up + down 
+        reco_stocks[stock]= y
+    
+        for key, value in reco_stocks.items():
+            if value == 10:
+                watch.append(key)
+            elif value == 11:
+                buy.append(key)
+            else:
+                break
+    #print(reco_stocks)
+    print("\nToday's stocks to watch and buy are as follows....")
+    print('Watch = ',watch)
+    print('Buy = ',buy)
 
 def save_stocks(df_close_prices):
     """Saves data to excel usng xlsxwriter as the engine"""
@@ -137,8 +162,9 @@ def get_stocks(s):
 
 def load_from_file():
     """Load data from file"""
-    data = pd.ExcelFile('share_test.xlsx')
+    data = pd.ExcelFile('share_test.xlsx', parse_dates = True, index_col=0)
     df_close_prices = data.parse('Sheet1')
+    df_close_prices.set_index('Date', inplace = True)
     return df_close_prices
 
 def dl_or_load():
