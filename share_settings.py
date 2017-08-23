@@ -4,13 +4,7 @@ class Settings():
     """contains all the settings for stock program"""
     def __init__(self):
         """Initialise the settings""" 
-        '''
-        #Moving average length in days.
-        self.MA_Sho = 5
-        self.MA_Mid = 15
-        self.MA_Lon = 30
-        self.MA_values = (self.MA_Sho, self.MA_Mid, self.MA_Lon)
-        '''
+        
         #Exponential moving average in days
         self.EMA_Sho = 5
         self.EMA_Mid = 12
@@ -27,10 +21,11 @@ class Settings():
         self.ed_date = date.today().isoformat()
         self.date_now = date.today()
         self.date_yst = date.today() - timedelta(days=1)
-
-
         
         #TimeLag - gap between down trigger and up trigger
         self.ts=1
 
-        
+        #Settings for the purchase model
+        self.pot = 10000
+        self.buy_prop = 0.1
+        self.sell_trigger = 1.1

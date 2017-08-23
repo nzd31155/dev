@@ -115,8 +115,6 @@ def rec_stocks(s,df_close_prices):
         u_tag = (stock + 'TrigU')
         d_tag = (stock + 'TrigD')
         #Calculates Reco dict for today
-        print(df_close_prices)
-        print(s.date_now,s.date_yst)
         up = df_close_prices.loc[s.date_now,u_tag]
         down = df_close_prices.loc[(s.date_yst),d_tag]
         y = up + down 
@@ -134,9 +132,9 @@ def rec_stocks(s,df_close_prices):
     print('Watch = ',watch)
     print('Buy = ',buy)
 
-def save_stocks(df_close_prices):
+def save_stocks(df_close_prices,filename):
     """Saves data to excel usng xlsxwriter as the engine"""
-    writer = pd.ExcelWriter('share_test.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter(filename, engine='xlsxwriter')
     df_close_prices.to_excel(writer, sheet_name='Sheet1')
     print('File saved')
 
@@ -156,7 +154,7 @@ def get_stocks(s):
     #Identifies the stocks to buy
     buy_stock(s,df_close_prices)
     #save copy to Excel
-    save_stocks(df_close_prices)
+    save_stocks(df_close_prices,'share_test.xlsx')
     print('Completed')
     return df_close_prices
 
