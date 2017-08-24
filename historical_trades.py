@@ -2,49 +2,48 @@ import pandas as pd
 import numpy as np 
 import share_functions as sf
 from share_settings import Settings
-
 s= Settings()
 
-tag = []
+"""    Requires 
+    Symbols - Stock symbols that form the portfolio
+    bars - Dataframe of prices for stocks
+    signals - A pandas dataframe of signals for stocks
+    initial capital - how much money to start with.
+    """
 
 def load_data (s,sf):
     """Loads data from stored file, filters for prices and buys"""
+    tag = []
+    tag2=[]
     for stock in s.symbols:
         tag.append(stock)
-        tag.append(stock+'BUY')
-
+        tag2.append(stock+'BUY')
     df1 = sf.load_from_file()
-    df = df1[tag]
-    
-    return df
+    bars = df1[tag]
+    signals = df1[tag2]
+    return bars, signals
 
-def buybuy (s,df):
-    """If buy trigger then buy a stock and add it to list"""
-    #down = np.where(df_close_prices[x]>df_close_prices[y], np.where(df_close_prices[y]>df_close_prices[z],1,False),False)
+def generate_positions(bars, signals,s):
+    """calculate purchases of stock"""
+    positions = pd.DataFrame(index = signals.index).fillna(0.0)
     for stock in s.symbols:
-        df[stock+'nHELD']=0
-        #Number of stocks bought
-        nh = np.where(df[stock+'nHELD'].shift(1)>0,df[stock+'nHELD'].shift(1),(np.where(df[stock+'BUY']==11,1000/(df[stock]/100),False)))
+        pp = np.where(signals[stock+'BUY']==11,s.buy_value/(bars[stock]/100),False)
+        positions[stock] = np.floor(pp)
+    return positions
 
-        #Populates the *nHELD field with numb shares
-        #df[stock+'nHELD'] = np.floor(nh)
-        df[stock+'nHELD'] = nh
-        
-        #Populates the *pp field with purchase price
-        pp = np.where(df[stock+'BUY']==11,df[stock],False)
-        df[stock+'PP'] = pp
+def build_portfolio(s,signals,positions):
+    """builds the portfolio table"""
+    portfolio = pd.DataFrame(index = signals.index).fillna(0)
+    for stock in s.symbols:
+        portfolio[stock]=bars[stock]
+        portfolio[stock+'HOLD']=positions[stock]
+        portfolio['cash'] =s.pot - (portfolio[stock]*portfolio[stock+'HOLD']).sum().cumsum()
+    print(portfolio)         
+    return portfolio
+bars, signals = load_data(s,sf)
+positions = generate_positions(bars, signals, s)
+portfolio = build_portfolio(s,signals,positions)
 
-        df[stock+'test'] = 0
-        df[stock+'test'] = 0
-        df[stock+'test'][df[stock+'nHELD'].shift(1)>0] = 1
-        
-        
-def sell(s,df):
-    """Calculates a sale price"""
-    #needs purchase price, number held, sell trigger to calculate the sale
+#save
+sf.save_stocks(portfolio,'historical_trades.xlsx')
 
-df = load_data(s,sf)
-buybuy(s,df)
-sf.save_stocks(df,'historical_trades.xlsx')
-
-print(df)
