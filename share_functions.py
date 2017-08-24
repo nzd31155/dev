@@ -53,18 +53,14 @@ def dl_stocks(s,start_d,end_d):
     df_temp = wb.DataReader(s.symbols, 'google', start_d, end_d)
     return df_temp
 
-def clean_stocks(field, df_temp,s):
+def clean_stocks(field, df_temp):
     """ selects specific 'fields' and stores all stocks in single df"""
     #Select field I want and clean the data removing the unwanted fields
     print('Cleaning stocks')
     cleanData = df_temp.ix[field]
     df_close_prices=pd.DataFrame(cleanData)
-    return df_close_prices
-
-def fill_missing_values(df_close_prices,s):
-    """Fills in the missing values in stock prices with a mean"""
     for stock in s.symbols:
-        df_close_prices[stock].fillna(method='pad')
+        df_close_prices[stock].fillna((df_close_prices[stock].mean()),inplace=True)
     return df_close_prices
 
 def get_latest_prices(df_close_prices,s):
@@ -151,8 +147,6 @@ def get_stocks(s):
     df_temp = dl_stocks(s,s.st_date,s.ed_date)
     #Limit to just close prices in single DF
     df_close_prices = clean_stocks('Close',df_temp)
-    #fill in the missing numbers
-    fill_missing_values(df_close_prices,s)
     #add in todays pricing
     df_close_prices.ix[s.date_now]=lp.get_lp(s)
     #calculate the 3 EMAs
