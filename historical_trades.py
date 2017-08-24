@@ -24,18 +24,24 @@ def buybuy (s,df):
     for stock in s.symbols:
         df[stock+'nHELD']=0
         #Number of stocks bought
-        n_held = np.where(df[stock+'BUY']==11,1000/(df[stock]/100),False)
+        nh = np.where(df[stock+'nHELD'].shift(1)>0,df[stock+'nHELD'].shift(1),(np.where(df[stock+'BUY']==11,1000/(df[stock]/100),False)))
+
+        #Populates the *nHELD field with numb shares
+        #df[stock+'nHELD'] = np.floor(nh)
+        df[stock+'nHELD'] = nh
         
-        #Can't get this bit to work...
-        '''
-        if the row above has a number, then use this, otherwise run line 27
-        np.where(df[stock+'nHELD'].shift(1)!=0
-        '''
-        df[stock+'nHELD'] = np.floor(n_held)
-        #Price stocks purchased at
+        #Populates the *pp field with purchase price
         pp = np.where(df[stock+'BUY']==11,df[stock],False)
         df[stock+'PP'] = pp
 
+        df[stock+'test'] = 0
+        df[stock+'test'] = 0
+        df[stock+'test'][df[stock+'nHELD'].shift(1)>0] = 1
+        
+        
+def sell(s,df):
+    """Calculates a sale price"""
+    #needs purchase price, number held, sell trigger to calculate the sale
 
 df = load_data(s,sf)
 buybuy(s,df)
