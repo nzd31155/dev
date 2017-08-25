@@ -109,7 +109,6 @@ def buy_stock(s,df_close_prices):
 
 def rec_stocks(s,df_close_prices):
     """Calculates watch/buy stocks"""
-    reco_stocks = {}
     watch = []
     buy = []
     for stock in s.symbols:
@@ -120,16 +119,12 @@ def rec_stocks(s,df_close_prices):
         up = df_close_prices.loc[s.date_now,u_tag]
         down = df_close_prices.loc[(s.date_yst),d_tag]
         y = up + down 
-        reco_stocks[stock]= y
-    
-        for key, value in reco_stocks.items():
-            if value == 10:
-                watch.append(key)
-            elif value == 11:
-                buy.append(key)
-            else:
-                break
-    #print(reco_stocks)
+        if y == 10.0:
+            watch.append(stock)
+        elif y ==11.0:
+            buy.append(stock)
+        else:
+            continue            
     print("\nToday's stocks to watch and buy are as follows....")
     print('Watch = ',watch)
     print('Buy = ',buy)
