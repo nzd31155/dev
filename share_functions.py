@@ -109,7 +109,7 @@ def rec_stocks(s,df_close_prices):
         #Calculates Reco dict for today
         up = df_close_prices.loc[s.date_now,u_tag]
         down = df_close_prices.ix[-2,d_tag]
-        down2 = df_close_prices.loc[(s.date_now),d_tag]
+        down2 = df_close_prices.ix[-1,d_tag]
         y = up + down 
         if down == 1.0:
             watch.append(stock)

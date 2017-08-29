@@ -23,7 +23,7 @@ class Settings():
         self.st_date = date(2015,1,1)
         self.ed_date = date.today().isoformat()
         self.date_now = datetime.combine(date.today(),time())
-        self.date_yst = date.today() - timedelta(days=self.ts)
+        #DELETE - self.date_yst = date.today() - timedelta(days=self.ts)
         
         #Settings for the purchase model
         self.pot = 10000

@@ -37,7 +37,6 @@ def build_portfolio(s,signals,positions):
     for stock in s.symbols:
         portfolio[stock]=bars[stock]
         portfolio[stock+'HOLD']=positions[stock]
-        portfolio['cash'] =s.pot - (portfolio[stock]*portfolio[stock+'HOLD']).sum().cumsum()
     print(portfolio)         
     return portfolio
 bars, signals = load_data(s,sf)
