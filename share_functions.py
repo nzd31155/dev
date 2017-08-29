@@ -78,6 +78,7 @@ def calc_columns(s,df_close_prices):
         tagu = (stock + 'TrigU')
         tagd = (stock + 'TrigD')
         tagb = (stock + 'BUY')
+        tagm = (stock + 'MACD')
         ema_values = s.EMA_values
         
         #calc EMAs
@@ -85,11 +86,13 @@ def calc_columns(s,df_close_prices):
             tage = (stock + '_EMA_' +str(ema_value))
             df_close_prices[tage] = df_close_prices[stock].ewm(span=ema_value, min_periods=ema_value, adjust=False).mean()
         
+        #calc MACD
+        macd = ((df_close_prices[z]-df_close_prices[x])/df_close_prices[stock])*100
+        df_close_prices[tagm] = macd
+        
         #Calculating the triggers
         up = np.where(df_close_prices[x]>df_close_prices[y], np.where(df_close_prices[y]>df_close_prices[z],10,False),False)
         down = np.where(df_close_prices[x]<df_close_prices[y], np.where(df_close_prices[y]<df_close_prices[z],1,False),False)
-        
-        #adding to the dataframe
         df_close_prices[tagd] = down
         df_close_prices[tagu] = up
         
@@ -106,15 +109,22 @@ def rec_stocks(s,df_close_prices):
         tag = (stock + 'BUY')
         u_tag = (stock + 'TrigU')
         d_tag = (stock + 'TrigD')
+        m_tag = (stock + 'MACD')
+        
         #Calculates Reco dict for today
         up = df_close_prices.loc[s.date_now,u_tag]
         down = df_close_prices.ix[-2,d_tag]
-        down2 = df_close_prices.ix[-1,d_tag]
+        down2 = df_close_prices.ix[-2,d_tag]
+        macd = df_close_prices.ix[-1,m_tag]
+        macd2 = df_close_prices.ix[-1,m_tag]
         y = up + down 
+        #Watch are if EMAs are in correct order going down
         if down == 1.0:
             watch.append(stock)
-        if down == 1.0 and down2 == 0:
+        #Nearly if Watch is true, MACD < 4% and lower than yesterday
+        if down == 1.0 and down2 == 0 and 0<macd>5 and macd2<macd:
             nearly.append(stock)
+        #Buy if down and up triggers are both true
         elif y ==11.0:
             buy.append(stock)
         else:
