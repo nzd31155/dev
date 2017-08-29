@@ -16,15 +16,15 @@ class Settings():
         self.symbols2 = ['AAL',	'ABF',	'ADM',	'AHT',	'ANTO',	'AV']
         self.symbols = ['AAL',	'ABF',	'ADM',	'AHT',	'ANTO',	'AV',	'AZN',	'BA',	'BAB',	'BARC',	'BATS',	'BDEV',	'BLND',	'BLT',	'BNZL',	'BP',	'BRBY',	'BT.A',	'CCH',	'CCL',	'CNA',	'CPG',	'CRDA',	'CRH',	'CTEC',	'DCC',	'DGE',	'DLG',	'EXPN',	'EZJ',	'FRES',	'GFS',	'GKN',	'GLEN',	'GSK',	'HL',	'HMSO',	'HSBA',	'IAG',	'IHG',	'III',	'IMB',	'INF',	'ITRK',	'ITV',	'JMAT',	'KGF',	'LAND',	'LGEN',	'LLOY',	'LSE',	'MCRO',	'MDC',	'MERL',	'MKS',	'MNDI',	'MRW',	'NG',	'NXT',	'OML',	'PPB',	'PRU',	'PSN',	'PSON',	'RB',	'RBS',	'RDSA',	'RDSB',	'REL',	'RIO',	'RMG',	'RR',	'RRS',	'RSA',	'RTO',	'SBRY',	'SDR',	'SGE',	'SGRO',	'SHP',	'SKG',	'SKY',	'SLA',	'SMIN',	'SMT',	'SN',	'SSE',	'STAN',	'STJ',	'SVT',	'TSCO',	'TUI',	'TW','ULVR','UU','VOD','WOS','WPG','WPP','WTB']
 
+        #TimeLag - gap between down trigger and up trigger
+        self.ts=1
+        
         #date range for pandas datatable
         self.st_date = date(2015,1,1)
         self.ed_date = date.today().isoformat()
         self.date_now = datetime.combine(date.today(),time())
-        self.date_yst = date.today() - timedelta(days=1)
+        self.date_yst = date.today() - timedelta(days=self.ts)
         
-        #TimeLag - gap between down trigger and up trigger
-        self.ts=1
-
         #Settings for the purchase model
         self.pot = 10000
         self.buy_value = 1000

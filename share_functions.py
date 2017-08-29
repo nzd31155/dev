@@ -68,48 +68,39 @@ def get_latest_prices(df_close_prices,s):
     print('Downloading todays current prices')
     df_close_prices.ix[s.date_now]=lp.get_lp(s)
 
-def calc_ema(s,df_close_prices):
-    """ Calculates EMA for stocks"""
-    ema_values = s.EMA_values
-    for ema_value in ema_values:
-        print('Calculating EMA value = ' +str(ema_value)) 
-        for stock in s.symbols:
-            tag = (stock + '_EMA_' +str(ema_value))
-            df_close_prices[tag] = df_close_prices[stock].ewm(span=ema_value, min_periods=ema_value, adjust=False).mean()
-        
-def EMA_trigger(s,df_close_prices):
+def calc_columns(s,df_close_prices):
     """Calculates triggers"""
-    print('Calculating up/down triggers and adds to df')
+    print('Searching for stocks to watch/buy')
     for stock in s.symbols:    
         x = (stock +'_EMA_' +str(s.EMA_Sho))
         y = (stock +'_EMA_' +str(s.EMA_Mid))
         z = (stock +'_EMA_' +str(s.EMA_Lon))
-        tagd = (stock + 'TrigD')
         tagu = (stock + 'TrigU')
-
+        tagd = (stock + 'TrigD')
+        tagb = (stock + 'BUY')
+        ema_values = s.EMA_values
+        
+        #calc EMAs
+        for ema_value in ema_values:
+            tage = (stock + '_EMA_' +str(ema_value))
+            df_close_prices[tage] = df_close_prices[stock].ewm(span=ema_value, min_periods=ema_value, adjust=False).mean()
+        
         #Calculating the triggers
-        down = np.where(df_close_prices[x]>df_close_prices[y], np.where(df_close_prices[y]>df_close_prices[z],1,False),False)
-        up = np.where(df_close_prices[x]<df_close_prices[y], np.where(df_close_prices[y]<df_close_prices[z],10,False),False)
+        up = np.where(df_close_prices[x]>df_close_prices[y], np.where(df_close_prices[y]>df_close_prices[z],10,False),False)
+        down = np.where(df_close_prices[x]<df_close_prices[y], np.where(df_close_prices[y]<df_close_prices[z],1,False),False)
         
         #adding to the dataframe
         df_close_prices[tagd] = down
         df_close_prices[tagu] = up
         
-
-def buy_stock(s,df_close_prices):
-    """Buy stocks that meet this criteria"""
-    print("Searching for a day's winners")
-    for stock in s.symbols:
-        tag = (stock + 'BUY')
-        u_tag = (stock + 'TrigU')
-        d_tag = (stock + 'TrigD')
-        #Calculates Reco column for df
-        x = df_close_prices[u_tag] +  df_close_prices[d_tag].shift(s.ts)
-        df_close_prices[tag] = x
+        #adding recommend tag
+        x = df_close_prices[tagu] +  df_close_prices[tagd].shift(s.ts)
+        df_close_prices[tagb] = x
 
 def rec_stocks(s,df_close_prices):
-    """Calculates watch/buy stocks"""
+    """Calculates watch/buy stocks only works if last date is today"""
     watch = []
+    nearly = []
     buy = []
     for stock in s.symbols:
         tag = (stock + 'BUY')
@@ -117,16 +108,20 @@ def rec_stocks(s,df_close_prices):
         d_tag = (stock + 'TrigD')
         #Calculates Reco dict for today
         up = df_close_prices.loc[s.date_now,u_tag]
-        down = df_close_prices.loc[(s.date_yst),d_tag]
+        down = df_close_prices.ix[-2,d_tag]
+        down2 = df_close_prices.loc[(s.date_now),d_tag]
         y = up + down 
-        if y == 10.0:
+        if down == 1.0:
             watch.append(stock)
+        if down == 1.0 and down2 == 0:
+            nearly.append(stock)
         elif y ==11.0:
             buy.append(stock)
         else:
             continue            
     print("\nToday's stocks to watch and buy are as follows....")
     print('Watch = ',watch)
+    print('Nearly = ',nearly)
     print('Buy = ',buy)
 
 def save_stocks(df_close_prices,filename):
@@ -144,12 +139,8 @@ def get_stocks(s):
     df_close_prices = clean_stocks('Close',df_temp)
     #add in todays pricing
     df_close_prices.ix[s.date_now]=lp.get_lp(s)
-    #calculate the 3 EMAs
-    calc_ema(s,df_close_prices)
-    #Calculates triggers
-    EMA_trigger(s,df_close_prices)
-    #Identifies the stocks to buy
-    buy_stock(s,df_close_prices)
+    #Calculates EMAs, triggers and watch/buy figures
+    calc_columns(s,df_close_prices)
     #save copy to Excel
     save_stocks(df_close_prices,'share_test.xlsx')
     print('Completed')
