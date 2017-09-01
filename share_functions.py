@@ -48,7 +48,7 @@ def options(df_close_prices):
 def dl_stocks(s,start_d,end_d):
     """Downloads stock prices from google"""
     #creates data frame using share tickers, source, date range
-    print('Downloading stocks')
+    print('Downloading stocks since -',s.st_date)
     stock_list = [s.symbols]
     df_temp = wb.DataReader(s.symbols, 'google', start_d, end_d)
     return df_temp
@@ -114,18 +114,18 @@ def rec_stocks(s,df_close_prices):
         #Calculates Reco dict for today
         up = df_close_prices.loc[s.date_now,u_tag]
         down = df_close_prices.ix[-2,d_tag]
-        down2 = df_close_prices.ix[-2,d_tag]
+        down2 = df_close_prices.ix[-1,d_tag]
         macd = df_close_prices.ix[-1,m_tag]
-        macd2 = df_close_prices.ix[-1,m_tag]
+        macd2 = df_close_prices.ix[-2,m_tag]
         y = up + down 
         #Watch are if EMAs are in correct order going down
-        if down == 1.0:
+        if down == 1.0 and macd<4:
             watch.append(stock)
-        #Nearly if Watch is true, MACD < 4% and lower than yesterday
-        if down == 1.0 and down2 == 0 and 0<macd>5 and macd2<macd:
-            nearly.append(stock)
+            #Nearly if Watch is true, MACD < 0% and > yesterday
+            if down2 == 0 and macd<0 and macd2>macd:
+                    nearly.append(stock)
         #Buy if down and up triggers are both true
-        elif y ==11.0:
+        if y ==11.0:
             buy.append(stock)
         else:
             continue            
