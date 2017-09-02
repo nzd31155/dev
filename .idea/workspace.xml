@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5132762d-2987-4fe4-a223-4394bdce19c9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/joe/calc_ema.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/joe/config.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/joe/database_manager.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/joe/finance_api.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/~$share_test.xlsx" afterPath="$PROJECT_DIR$/~$share_test.xlsx" />
-    </list>
+    <list default="true" id="5132762d-2987-4fe4-a223-4394bdce19c9" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
