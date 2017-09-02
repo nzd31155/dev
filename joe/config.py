@@ -15,6 +15,8 @@ DATABASE_CONFIG = {
     'port'    : 3306
 }
 MARKET_SYMBOL = 'LON'
+PERIOD = '1M'
+INTERVAL = 86400
 STOCKS = {
     'III' : '3I GRP.',
     'ABF' : 'A.B.FOOD',

@@ -9,8 +9,6 @@ Information on the package can be found here https://pypi.python.org/pypi/google
 __author__ = 'Neal Dunkinson, Joe Mullen'
 __version__ = '0.1'
 
-PERIOD = '1M'
-INTERVAL = 86400
 
 from googlefinance.client import get_prices_data
 from datetime import datetime
@@ -39,12 +37,11 @@ def get_today_close():
     todays_date = today_date()
 
     for stock in _cfg.STOCKS:
-        if test_count < 2:
             param = [{
                 'q': stock,  # Stock symbol (ex: "AAPL")
                 'x': "LON"  # Stock exchange symbol on which stock is traded (ex: "NASD")
             }]
-            df = get_prices_data(param, PERIOD)
+            df = get_prices_data(param, _cfg.PERIOD)
             df.reset_index(level=0, inplace=True)
             for index, row in df.iterrows():
                 if str(row['index']) == str(todays_date):

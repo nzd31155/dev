@@ -4,6 +4,9 @@ Script contains functions for interacting with the backend postgresDB.
 
 """
 
+__author__ = 'Neal Dunkinson, Joe Mullen'
+__version__ = '0.1'
+
 import pymysql
 import joe.config as _cfg
 
