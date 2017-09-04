@@ -140,6 +140,15 @@ def save_stocks(df_close_prices,filename):
     df_close_prices.to_excel(writer, sheet_name='Sheet1')
     print('File saved')
 
+def save_MACD(df_close_prices):
+    """Saves data to MACD excel file xlsxwriter as the engine"""
+    path = '/Users/neald/Dropbox/'
+    filename = 'downloadprices.xlsx'
+    writer = pd.ExcelWriter(path+filename, engine='xlsxwriter')
+    df = df_close_prices.sort_index()
+    df.to_excel(writer, sheet_name='Prices', startrow=1)
+    writer.save()
+    print('MACD_prices saved')
 
 def get_stocks(s):
     """embeds >1 functn to download, format and save"""
@@ -149,6 +158,8 @@ def get_stocks(s):
     df_close_prices = clean_stocks('Close',df_temp)
     #add in todays pricing
     df_close_prices.ix[s.date_now]=lp.get_lp(s)
+    #saves to file
+    save_MACD(df_close_prices)
     #Calculates EMAs, triggers and watch/buy figures
     calc_columns(s,df_close_prices)
     #save copy to Excel
