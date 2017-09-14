@@ -112,7 +112,7 @@ def rec_stocks(s,df_close_prices):
         m_tag = (stock + 'MACD')
         
         #Calculates Reco dict for today
-        up = df_close_prices.loc[s.date_now,u_tag]
+        up = df_close_prices.ix[-1,u_tag]
         down = df_close_prices.ix[-2,d_tag]
         down2 = df_close_prices.ix[-1,d_tag]
         macd = df_close_prices.ix[-1,m_tag]
@@ -157,7 +157,7 @@ def get_stocks(s):
     #Limit to just close prices in single DF
     df_close_prices = clean_stocks('Close',df_temp)
     #add in todays pricing
-    df_close_prices.ix[s.date_now]=lp.get_lp(s)
+    #df_close_prices.ix[s.date_now]=lp.get_lp(s)
     #saves to file
     save_MACD(df_close_prices)
     #Calculates EMAs, triggers and watch/buy figures
