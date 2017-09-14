@@ -6,9 +6,9 @@ class Settings():
         """Initialise the settings""" 
         
         #Exponential moving average in days
-        self.EMA_Sho = 3
+        self.EMA_Sho = 5
         self.EMA_Mid = 10
-        self.EMA_Lon = 33
+        self.EMA_Lon = 20
         self.EMA_values = (self.EMA_Sho, self.EMA_Mid, self.EMA_Lon)
 
         #FTSE100 Share list the selfsymbols is the active list, switch with symbols2/3 when scaling.
