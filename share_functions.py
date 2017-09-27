@@ -20,14 +20,15 @@ def options(df_close_prices):
             "3. See/Change settings\n"
             "4. Plot stock calcs\n"
             "5. List watch/buy stocks\n"
-            "6. Quit\n"
+            "6. Update prices\n"
+            "7. Quit\n"
             )
             
             selection = 0
-            while selection not in (range(1,7)):
-                selection = int(input("type a number from 1-6\n> "))
+            while selection not in (range(1,8)):
+                selection = int(input("type a number from 1-7\n> "))
         except (ValueError, NameError, SyntaxError):
-            print("Type a number from 1-6\n> ")
+            print("Type a number from 1-7\n> ")
         
         #once entry is acceptible, run the option
         else:
@@ -42,6 +43,8 @@ def options(df_close_prices):
             elif selection == 5:
                 rec_stocks(s,df_close_prices)
             elif selection == 6:
+                get_latest_prices(df_close_prices,s)
+            elif selection == 7:
                 break
 
 
@@ -58,6 +61,7 @@ def clean_stocks(field, df_temp):
     #Select field I want and clean the data removing the unwanted fields
     print('Cleaning stocks')
     cleanData = df_temp.ix[field]
+#    cleanData = df_temp.loc[:,[field]]  when ix is depreciated
     df_close_prices=pd.DataFrame(cleanData)
     for stock in s.symbols:
         df_close_prices[stock].fillna((df_close_prices[stock].mean()),inplace=True)
@@ -65,8 +69,9 @@ def clean_stocks(field, df_temp):
 
 def get_latest_prices(df_close_prices,s):
     """downloads todays latest prices - use before close"""
-    print('Downloading todays current prices')
+    print('Downloading latest prices')
     df_close_prices.ix[s.date_now]=lp.get_lp(s)
+#   df_close_prices.loc[[s.date_now],:]=lp.get_lp(s) when iX is depreciated
 
 def calc_columns(s,df_close_prices):
     """Calculates triggers"""
@@ -121,7 +126,7 @@ def rec_stocks(s,df_close_prices):
         #Watch are if EMAs are in correct order going down
         if down == 1.0 and macd<4:
             watch.append(stock)
-            #Nearly if Watch is true, MACD < 0% and > yesterday
+            #Nearly if Watch is true, MACD < 0% and < yesterday
             if down2 == 0 and macd<0 and macd2>macd:
                     nearly.append(stock)
         #Buy if down and up triggers are both true

@@ -6,9 +6,9 @@ class Settings():
         """Initialise the settings""" 
         
         #Exponential moving average in days
-        self.EMA_Sho = 5
-        self.EMA_Mid = 10
-        self.EMA_Lon = 20
+        self.EMA_Sho = 3
+        self.EMA_Mid = 9
+        self.EMA_Lon = 11
         self.EMA_values = (self.EMA_Sho, self.EMA_Mid, self.EMA_Lon)
 
         #FTSE100 Share list the selfsymbols is the active list, switch with symbols2/3 when scaling.
@@ -20,7 +20,8 @@ class Settings():
         self.ts=1
         
         #date range for pandas datatable
-        self.st_date = date(2017,5,1)
+        #self.st_date = date(2015,1,1)
+        self.st_date = date.today() - timedelta(days=self.EMA_Lon+365)
         self.ed_date = date.today().isoformat()
         self.date_now = datetime.combine(date.today(),time())
         #DELETE - self.date_yst = date.today() - timedelta(days=self.ts)
