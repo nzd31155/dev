@@ -64,7 +64,7 @@ def clean_stocks(field, df_temp):
 #    cleanData = df_temp.loc[:,[field]]  when ix is depreciated
     df_close_prices=pd.DataFrame(cleanData)
     for stock in s.symbols:
-        df_close_prices[stock].fillna((df_close_prices[stock].mean()),inplace=True)
+        df_close_prices[stock].fillna((df_close_prices[stock].mean()),inplace=True) #gets stocks and fills gaps with mean.
     return df_close_prices
 
 def get_latest_prices(df_close_prices,s):
@@ -172,9 +172,9 @@ def get_stocks(s):
     print('Completed')
     return df_close_prices
 
-def load_from_file():
+def load_from_file(xlsx_file='share_test.xlsx'):
     """Load data from file"""
-    data = pd.ExcelFile('share_test.xlsx', parse_dates = True, index_col=0)
+    data = pd.ExcelFile(xlsx_file, parse_dates = True, index_col=0)
     df_close_prices = data.parse('Sheet1')
     df_close_prices.set_index('Date', inplace = True)
     return df_close_prices

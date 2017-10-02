@@ -21,7 +21,7 @@ def get(symbol,exchange):
 def get_lp(s):
     """gets latest prices from google"""
     sl = []  
-    for stock in s.symbols:        
+    for stock in s.symbols:          
         #creates a list of latest stock prices
         quote = get(stock,"LON")
         #changes string to integer and removes ','
