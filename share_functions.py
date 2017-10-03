@@ -3,6 +3,7 @@ import latest_prices as lp
 import pandas as pd
 import pandas_datareader.data as wb
 import numpy as np 
+import portfolio as p
 
 #this is a test line
 
@@ -20,7 +21,7 @@ def options(df_close_prices):
             "3. See/Change settings\n"
             "4. Plot stock calcs\n"
             "5. List watch/buy stocks\n"
-            "6. Update prices\n"
+            "6. Run portfolio simulation\n"
             "7. Quit\n"
             )
             
@@ -43,7 +44,7 @@ def options(df_close_prices):
             elif selection == 5:
                 rec_stocks(s,df_close_prices)
             elif selection == 6:
-                get_latest_prices(df_close_prices,s)
+                p.run_main()
             elif selection == 7:
                 break
 
