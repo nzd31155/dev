@@ -16,7 +16,7 @@ p = PortfolioRecord
 
 def run_main():
     #Start with some test data loads portfolio_test file, portfolio_test2 includes 2 stocks
-    df_rawdata = sf.load_from_file()
+    df_rawdata = sf.load_from_file()  # defaults to share_test.xlsx
     #print(df[20:30])
     df=create_df(df_rawdata)
     sf.save_stocks(df,'portfolio.xlsx')
