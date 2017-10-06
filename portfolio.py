@@ -8,10 +8,10 @@ Can save/export history to excel.abs
 import pandas as pd 
 from datetime import date, datetime, timedelta
 import share_functions as sf
-from share_settings import Settings
+#from share_settings import Settings
 from portfolio_record import PortfolioRecord
 #global variables
-s = Settings()
+#s = Settings()
 p = PortfolioRecord
 
 def run_main():
@@ -19,12 +19,12 @@ def run_main():
     df_rawdata = sf.load_from_file()  # defaults to share_test.xlsx
     #print(df[20:30])
     df=create_df(df_rawdata)
-    sf.save_stocks(df,'portfolio.xlsx')
+    #sf.save_stocks(df,'portfolio.xlsx')  #cut this out if using simulation_looper
 
 def build_portfolio(df_rawdata):
     pf_dict = {}
     """load in the stocks from Settings"""
-    for stock in s.symbols:        #Later - replace this with s.symbols
+    for stock in sf.s.symbols:        #Later - replace this with s.symbols
         stock_price = stock + "BUY"
         n=0
         for index, row in df_rawdata.iterrows():
@@ -41,5 +41,5 @@ def create_df(df_rawdata):
     df.columns = ['p_date','stock','p_price','n_stocks','is_held','days_held','s_date','s_price','profit','pctgain','s_type']
     #sorts into chonological order
     df = df.sort_values('p_date')
-    print("Low sell pct = ", s.l_trig1, "EMA_l switch ", s.l_trig2, "Min buy pct ", s.min_gain, sum(df.pctgain))
+    print("Low sell pct = ", sf.s.l_trig1, "EMA_l switch ", sf.s.l_trig2, "Min buy pct ", sf.s.min_gain, "Profit ", sum(df.profit))
     return df

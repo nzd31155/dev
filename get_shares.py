@@ -1,9 +1,7 @@
-from share_settings import Settings
 import share_functions as sf
 
-s = Settings()
 
-def main(s):
+def main():
     """Main programme loop"""
     print("\n\n\t*******   Starting up stocks analysis environment   ******* \n")
     
@@ -12,4 +10,4 @@ def main(s):
     #runs the main program
     sf.options(df_close_prices)
     
-main(s)
+main()

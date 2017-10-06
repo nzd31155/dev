@@ -40,9 +40,18 @@ class Settings():
         
         #selling triggers
         self.max_days_held = 70
-        self.l_trig1 = 10 #Low sell
-        self.l_trig2 = 5  #EMA_l switch
-        self.min_gain = 4  
+        self.l_trig1 = 0 #Low sell normally 10
+        self.l_trig2 = 0  #EMA_l switch normally 5
+        self.min_gain = 0  #normally 4
+
+    def loop_iter1(self,n):
+        self.l_trig1 = n
+    
+    def loop_iter2(self,n):
+        self.l_trig2 = n
+
+    def loop_iter3(self,n):
+        self.min_gain = n
 
         #6,3 = 364.6
         #5,3 = 375.9

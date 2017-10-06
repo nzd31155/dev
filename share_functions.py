@@ -4,6 +4,7 @@ import pandas as pd
 import pandas_datareader.data as wb
 import numpy as np 
 import portfolio as p
+import simulation_looper as sim  
 
 #this is a test line
 
@@ -44,7 +45,7 @@ def options(df_close_prices):
             elif selection == 5:
                 rec_stocks(s,df_close_prices)
             elif selection == 6:
-                p.run_main()
+                sim.looper()
             elif selection == 7:
                 break
 
