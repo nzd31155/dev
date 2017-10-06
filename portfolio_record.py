@@ -49,12 +49,15 @@ class PortfolioRecord():
                         iter_date += timedelta(days = 1)                 
                     #long trigger
                     lg_trigger = iter_date >= lon_s_date
+                    iter_price = df.loc[iter_date,[self.stock]].values[0]
+
+                    #low trigger1 - if stock drops below 10% sell
+                    lw_trigger = iter_price < (self.p_price * (1-s.l_trig1/100))                    
                     
-                    #low trigger - if stock dips x% below ema_Long
+                    #low trigger2 - if stock dips x% below ema_Long
                     label_l = self.stock + "_EMA_" + str(s.EMA_Lon)
                     ema_l = df.loc[iter_date,[label_l]].values[0]
-                    iter_price = df.loc[iter_date,[self.stock]].values[0]
-                    lw_trigger = iter_price < (ema_l*(1-(s.low_sell_pct/100)))
+                    lw_trigger = iter_price < (ema_l*(1-(s.l_trig2/100)))
                     
                     #high trigger
                     #builds iterative df to find max price over time period
@@ -65,22 +68,16 @@ class PortfolioRecord():
                     
                     #has the stock now grown by x%
                     if max_price > self.p_price * (1+(s.min_gain/100)):
-                        print('YES!!!')
                         label_s = self.stock + "_EMA_" + str(s.EMA_Sho) 
                         ema_s = df.loc[iter_date,[label_s]].values[0]
-                        #has the price increased by x%
-                        print(self.stock, self.p_date, iter_date, ema_l, ema_s)
+                        #print(self.stock, self.p_date, iter_date, ema_l, ema_s)
                         #if EMA short dips under EMA long
                         if ema_s <  ema_l:
-                            print('High trigger')
+                        #    print('High trigger')
                             hi_trigger = True
                                 
                     #iterate back through the loop
                     if iter_date < df.index.max().date():
-                        print('looping')
-                        n=1
-                        print(n)
-                        n+=1
                         iter_date += timedelta(days = 1)  
                     else:
                         #print(self.stock, ' is currently held')
@@ -91,53 +88,6 @@ class PortfolioRecord():
                 fill_sale_data(self,iter_price, iter_date) 
                 looper = False
                 
-            
-            '''
-            #iterate through the days before selling on long_trigger
-            while iter_date <= lon_s_date:
-                #print('loop', iter_date, self.stock, self.p_date)
-                while iter_date not in df.index:
-                    #print('loop not in df')
-                    iter_date += timedelta(days = 1)                 #skips weekends/bankholidays
-               
-                label_l = self.stock + "_EMA_" + str(s.EMA_Lon)
-                label_s = self.stock + "_EMA_" + str(s.EMA_Sho) 
-                ema_s = df.loc[iter_date,[label_s]].values[0]
-                ema_l = df.loc[iter_date,[label_l]].values[0] 
-                #low sell
-                iter_price = df.loc[iter_date,[self.stock]].values[0]
-                if iter_price < (ema_l*(1-(s.low_sell_pct/100))):
-                    print('lowsell')
-                    self.s_type = 'low_sell'
-                    fill_sale_data(self, iter_price, iter_date)
-                     
-                    break
-                #high sell
-                #if min gain on stock is at least > s.min_gain
-                elif max(df.loc[self.p_date:iter_date,[self.stock]].values[0])> self.p_price * (1+(s.min_gain/100)):
-                    #has the price increased by x%
-                    print(self.stock, ema_l, ema_s)
-                    #if EMA short dips under EMA long
-                    if ema_s <  ema_l:
-                        print('high_sell')
-                        self.s_type = 'high_sell'
-                        fill_sale_data(self, iter_price, iter_date)
-                        break     
-
-                #iterate back through the loop    
-                elif iter_date < df.index.max().date():
-                    #print('iter_date loopback')
-                    iter_date += timedelta(days = 1)  
-
-                else:
-                    break
-            #Long sell
-            else:
-                print('long sell')
-                fill_sale_data(self, iter_price, iter_date)
-                self.s_type = 'Long sell'    
-                self.iter_date = lon_s_date
-            '''
         triggers(self,df)
         
     def create_record(self):

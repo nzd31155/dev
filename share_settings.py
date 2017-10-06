@@ -40,5 +40,20 @@ class Settings():
         
         #selling triggers
         self.max_days_held = 70
-        self.low_sell_pct = 6 
-        self.min_gain = 3
+        self.l_trig1 = 10 #Low sell
+        self.l_trig2 = 5  #EMA_l switch
+        self.min_gain = 4  
+
+        #6,3 = 364.6
+        #5,3 = 375.9
+        #4,3 = 332.9
+        #3,3 = 278.7
+        #6,4 = 380.1
+        #5,4 = 391.4
+        #4,4 = 359.2
+        #3,4 = 319.9
+        #6,5 = 366.4
+        #5,5 = 388.9
+        #4,5 = 356.7
+        #3,5 = 338.7
+        

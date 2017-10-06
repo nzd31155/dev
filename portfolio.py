@@ -41,4 +41,5 @@ def create_df(df_rawdata):
     df.columns = ['p_date','stock','p_price','n_stocks','is_held','days_held','s_date','s_price','profit','pctgain','s_type']
     #sorts into chonological order
     df = df.sort_values('p_date')
+    print("Low sell pct = ", s.l_trig1, "EMA_l switch ", s.l_trig2, "Min buy pct ", s.min_gain, sum(df.pctgain))
     return df
