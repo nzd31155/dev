@@ -7,6 +7,9 @@ def looper():
     """Runs the simulation using range of 
     values for set arguments"""
 
+#add in calculations for number and %success of purchases
+#also limit purchases to pot size.
+
     loop = range(1,11)
     for n in loop:
         sf.s.loop_iter1(n)

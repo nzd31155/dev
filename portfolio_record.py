@@ -39,13 +39,15 @@ class PortfolioRecord():
             lon_s_date = self.p_date + timedelta(days = sf.s.max_days_held)
             iter_date = self.p_date
             looper = True
-            lw_trigger1, lw_trigger2, lg_trigger, hi_trigger = (False, False, False, False)
+            lw_trigger1, lw_trigger2, lg_trigger, hi_trigger, cur_held = (False,)*5
             #skips over weekends/holidays not in stock df
             while looper == True:
                 while lw_trigger1 | lw_trigger2 | lg_trigger | hi_trigger == False: 
-                    while iter_date not in df.index:
+                    while iter_date not in df.index and iter_date <= df.index.max().date():  
                         #print('loop not in df')
-                        iter_date += timedelta(days = 1)                 
+                        iter_date += timedelta(days = 1)
+                    print('loop')
+                    
                     #long trigger
                     lg_trigger = iter_date >= lon_s_date
                     iter_price = df.loc[iter_date,[self.stock]].values[0]
@@ -71,21 +73,25 @@ class PortfolioRecord():
                         ema_s = df.loc[iter_date,[label_s]].values[0]
                         #print(self.stock, self.p_date, iter_date, ema_l, ema_s)
                         #if EMA short dips under EMA long
-                        if ema_s <  ema_l:
-                        #    print('High trigger')
-                            hi_trigger = True
-                                
-                    #iterate back through the loop
-                    if iter_date < df.index.max().date():
-                        iter_date += timedelta(days = 1)  
-                    else:
-                        #print(self.stock, ' is currently held')
-                        break
+                        hi_trigger = ema_s <  ema_l
 
-                #set sale price and populate class sell fields
-                #print("Long -",lg_trigger,"Low -",lw_trigger,"High -",hi_trigger)    
-                fill_sale_data(self,iter_price, iter_date) 
-                looper = False
+                    #break out if latest date after trigger tests                
+                    if iter_date == df.index.max().date():
+                        cur_held = True
+                        break    
+                        
+                    #if not latest date, iterate back through the loop
+                    iter_date += timedelta(days = 1)  
+                    print(iter_date)
+                if cur_held:
+                    print(self.stock, 'current held')
+                    break
+                else:
+                    #set sale price and populate class sell fields
+                    #print("Long -",lg_trigger,"Low -",lw_trigger,"High -",hi_trigger)    
+                    print(self.stock,'adding sales data')
+                    fill_sale_data(self,iter_price, iter_date) 
+                    looper = False
                 
         triggers(self,df)
         

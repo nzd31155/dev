@@ -24,7 +24,7 @@ def run_main():
 def build_portfolio(df_rawdata):
     pf_dict = {}
     """load in the stocks from Settings"""
-    for stock in sf.s.symbols:        #Later - replace this with s.symbols
+    for stock in sf.s.symbols2:        #Later - replace this with s.symbols
         stock_price = stock + "BUY"
         n=0
         for index, row in df_rawdata.iterrows():
@@ -41,5 +41,7 @@ def create_df(df_rawdata):
     df.columns = ['p_date','stock','p_price','n_stocks','is_held','days_held','s_date','s_price','profit','pctgain','s_type']
     #sorts into chonological order
     df = df.sort_values('p_date')
-    print("Low sell pct = ", sf.s.l_trig1, "EMA_l switch ", sf.s.l_trig2, "Min buy pct ", sf.s.min_gain, "Profit ", sum(df.profit))
+    print("Low sell % =", sf.s.l_trig1, "EMA_l switch =", sf.s.l_trig2, "Min grow% =", sf.s.min_gain, "Profit =", sum(df.profit),
+    'Success rate =', (sum(n > 0 for n in df.profit)/len(df.profit)), "N  completed sales  =", sum(n == False for n in df.is_held),
+    'n held =', sum(n==True for n in df.is_held))
     return df
