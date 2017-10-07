@@ -42,11 +42,11 @@ class PortfolioRecord():
             lw_trigger1, lw_trigger2, lg_trigger, hi_trigger, cur_held = (False,)*5
             #skips over weekends/holidays not in stock df
             while looper == True:
-                while lw_trigger1 | lw_trigger2 | lg_trigger | hi_trigger == False: 
+                while lw_trigger1 | lw_trigger2 | lg_trigger | hi_trigger | cur_held == False: 
                     while iter_date not in df.index and iter_date <= df.index.max().date():  
                         #print('loop not in df')
                         iter_date += timedelta(days = 1)
-                    print('loop')
+                    #print('loop')
                     
                     #long trigger
                     lg_trigger = iter_date >= lon_s_date
@@ -76,20 +76,16 @@ class PortfolioRecord():
                         hi_trigger = ema_s <  ema_l
 
                     #break out if latest date after trigger tests                
-                    if iter_date == df.index.max().date():
-                        cur_held = True
-                        break    
+                    cur_held =  iter_date == df.index.max().date()
                         
                     #if not latest date, iterate back through the loop
                     iter_date += timedelta(days = 1)  
-                    print(iter_date)
+                    #print(iter_date)
                 if cur_held:
-                    print(self.stock, 'current held')
                     break
                 else:
                     #set sale price and populate class sell fields
-                    #print("Long -",lg_trigger,"Low -",lw_trigger,"High -",hi_trigger)    
-                    print(self.stock,'adding sales data')
+                    #print(self.stock,'adding sales data')
                     fill_sale_data(self,iter_price, iter_date) 
                     looper = False
                 
