@@ -13,7 +13,6 @@ class PortfolioRecord():
         self.is_held = True
         self.profit = None
         self.pctgain = None
-        self.s_type = None
 
         """calculates how long stock held for"""
         self.p_date = datetime.strptime(self.p_date,'%Y-%m-%d').date()
@@ -94,5 +93,5 @@ class PortfolioRecord():
     def create_record(self):
         """builds the tuple for the df, check order matehces column list"""
         tp = (self.p_date, self.stock, self.p_price, self.n_stocks, self.is_held, self.days_held, 
-        self.s_date, self.s_price, self.profit, self.pctgain, self.s_type)
+        self.s_date, self.s_price, self.profit, self.pctgain)
         return tp 

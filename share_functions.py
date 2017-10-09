@@ -22,15 +22,16 @@ def options(df_close_prices):
             "3. See/Change settings\n"
             "4. Plot stock calcs\n"
             "5. List watch/buy stocks\n"
-            "6. Run portfolio simulation\n"
-            "7. Quit\n"
+            "6. Calc single portfolio \n"            
+            "7. Run portfolio simulation\n"
+            "8. Quit\n"
             )
             
             selection = 0
-            while selection not in (range(1,8)):
-                selection = int(input("type a number from 1-7\n> "))
+            while selection not in (range(1,9)):
+                selection = int(input("type a number from 1-8\n> "))
         except (ValueError, NameError, SyntaxError):
-            print("Type a number from 1-7\n> ")
+            print("Type a number from 1-8\n> ")
         
         #once entry is acceptible, run the option
         else:
@@ -45,8 +46,10 @@ def options(df_close_prices):
             elif selection == 5:
                 rec_stocks(s,df_close_prices)
             elif selection == 6:
-                sim.looper()
+                p.run_main()
             elif selection == 7:
+                sim.looper()
+            elif selection == 8:
                 break
 
 

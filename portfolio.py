@@ -19,7 +19,7 @@ def run_main():
     df_rawdata = sf.load_from_file()  # defaults to share_test.xlsx
     #print(df[20:30])
     df=create_df(df_rawdata)
-    #sf.save_stocks(df,'portfolio.xlsx')  #cut this out if using simulation_looper
+    sf.save_stocks(df,'portfolio.xlsx')  #cut this out if using simulation_looper
 
 def build_portfolio(df_rawdata):
     pf_dict = {}
@@ -38,7 +38,7 @@ def create_df(df_rawdata):
     """Take pf data and insert into a df, transposes and adds colum titles"""
     pf_dict = build_portfolio(df_rawdata)
     df = pd.DataFrame(pf_dict).transpose().fillna(0)
-    df.columns = ['p_date','stock','p_price','n_stocks','is_held','days_held','s_date','s_price','profit','pctgain','s_type']
+    df.columns = ['p_date','stock','p_price','n_stocks','is_held','days_held','s_date','s_price','profit','pctgain']
     #sorts into chonological order
     df = df.sort_values('p_date')
     print("Low sell % =", sf.s.l_trig1, "EMA_l switch =", sf.s.l_trig2, "Min grow% =", sf.s.min_gain, "Profit =", sum(df.profit),

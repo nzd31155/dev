@@ -28,11 +28,10 @@ class Settings():
         self.ts=1
         
         #date range for pandas datatable
-        #self.st_date = date(2015,1,1)
-        self.st_date = date.today() - timedelta(days=self.EMA_Lon+365)
+        self.st_date = date(2016,1,1)
+        #self.st_date = date.today() - timedelta(days=self.EMA_Lon+365)
         self.ed_date = date.today().isoformat()
         self.date_now = datetime.combine(date.today(),time())
-        #DELETE - self.date_yst = date.today() - timedelta(days=self.ts)
         
         #Settings for the purchase model
         self.pot = 10000
@@ -40,9 +39,9 @@ class Settings():
         
         #selling triggers
         self.max_days_held = 70
-        self.l_trig1 = 0 #Low sell normally 10
-        self.l_trig2 = 0  #EMA_l switch normally 5
-        self.min_gain = 0  #normally 4
+        self.l_trig1 = 9 #Low sell normally 10
+        self.l_trig2 = 5  #EMA_l switch normally 5
+        self.min_gain = 3  #normally 4
 
     def loop_iter1(self,n):
         self.l_trig1 = n
@@ -52,17 +51,3 @@ class Settings():
 
     def loop_iter3(self,n):
         self.min_gain = n
-
-        #6,3 = 364.6
-        #5,3 = 375.9
-        #4,3 = 332.9
-        #3,3 = 278.7
-        #6,4 = 380.1
-        #5,4 = 391.4
-        #4,4 = 359.2
-        #3,4 = 319.9
-        #6,5 = 366.4
-        #5,5 = 388.9
-        #4,5 = 356.7
-        #3,5 = 338.7
-        
