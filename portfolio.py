@@ -17,9 +17,8 @@ p = PortfolioRecord
 def run_main():
     #Start with some test data loads portfolio_test file, portfolio_test2 includes 2 stocks
     df_rawdata = sf.load_from_file()  # defaults to share_test.xlsx
-    #print(df[20:30])
     df=create_df(df_rawdata)
-    sf.save_stocks(df,'portfolio.xlsx')  #cut this out if using simulation_looper
+    #sf.save_stocks(df,'portfolio.xlsx')  #cut this out if using simulation_looper
 
 def build_portfolio(df_rawdata):
     pf_dict = {}
@@ -41,7 +40,7 @@ def create_df(df_rawdata):
     df.columns = ['p_date','stock','p_price','n_stocks','is_held','days_held','s_date','s_price','profit','pctgain']
     #sorts into chonological order
     df = df.sort_values('p_date')
-    print("Low sell % =", sf.s.l_trig1, "EMA_l switch =", sf.s.l_trig2, "Min grow% =", sf.s.min_gain, "Profit =", sum(df.profit),
+    print("bottom sell % =", sf.s.l_trig1, "low trend switch =", sf.s.l_trig2, "Min grow% =", sf.s.min_gain, "H-sell%", sf.s.h_trig1, "Profit =", sum(df.profit),
     'Success rate =', (sum(n > 0 for n in df.profit)/(sum(n == False for n in df.is_held))), "N  completed sales  =", sum(n == False for n in df.is_held),
     'n held =', sum(n==True for n in df.is_held))
     return df

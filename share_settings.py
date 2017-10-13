@@ -41,7 +41,8 @@ class Settings():
         self.max_days_held = 70
         self.l_trig1 = 9 #Low sell normally 10
         self.l_trig2 = 5  #EMA_l switch normally 5
-        self.min_gain = 3  #normally 4
+        self.min_gain = 4  #price grows at least by...
+        self.h_trig1 = 2   #if iterprice dips X% below ema_S
 
     def loop_iter1(self,n):
         self.l_trig1 = n
@@ -51,3 +52,6 @@ class Settings():
 
     def loop_iter3(self,n):
         self.min_gain = n
+    
+    def loop_iter4(self,n):
+        self.h_trig1 = n

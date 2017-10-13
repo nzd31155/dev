@@ -17,5 +17,7 @@ def looper():
             sf.s.loop_iter2(n)
             for n in loop:
                 sf.s.loop_iter3(n)
-                p.run_main()
+                for n in loop:
+                    sf.s.loop_iter3(n)
+                    p.run_main()
                 
