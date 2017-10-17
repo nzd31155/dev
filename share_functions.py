@@ -22,7 +22,7 @@ def options(df_close_prices):
             "3. See/Change settings\n"
             "4. Plot stock calcs\n"
             "5. List watch/buy stocks\n"
-            "6. Calc single portfolio \n"            
+            "6. List sells and calc portfolio \n"            
             "7. Run portfolio simulation\n"
             "8. Quit\n"
             )

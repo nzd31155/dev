@@ -39,10 +39,11 @@ class Settings():
         
         #selling triggers
         self.max_days_held = 70
+        self.min_days_held = 50
         self.l_trig1 = 9 #Low sell normally 10
-        self.l_trig2 = 5  #EMA_l switch normally 5
-        self.min_gain = 4  #price grows at least by...
-        self.h_trig1 = 2   #if iterprice dips X% below ema_S
+        self.l_trig2 = 1  #EMA_l switch normally  5-10
+        self.min_gain = 4  #price grows at least by...  3-10
+        self.h_trig1 = -3.8   #if iterprice dips X% below ema_S   1-3
 
     def loop_iter1(self,n):
         self.l_trig1 = n
