@@ -5,8 +5,9 @@ import pandas_datareader.data as wb
 import numpy as np 
 import portfolio as p
 import simulation_looper as sim  
-
-#this is a test line
+import datetime, requests
+from io import StringIO
+from pandas.io.common import urlencode
 
 s = Settings()
 df_close_prices = 0
@@ -61,6 +62,31 @@ def dl_stocks(s,start_d,end_d):
     df_temp = wb.DataReader(s.symbols, 'google', start_d, end_d)
     return df_temp
 
+def dl_stocks_temp(s,start_d, end_d):
+    """ temp fix for when google.finance API down  this plays instead of dl_stocks above"""
+    BASE = 'http://finance.google.com/finance/historical'
+    df_close_prices = pd.DataFrame()
+
+            
+    def build_url(symbol, start, end):
+        params = {
+        'q': symbol,
+        'startdate': start,
+        'enddate': end,
+        'output': "csv"
+        }
+        return BASE + '?' + urlencode(params)
+
+    for stock in s.symbols:
+        url = build_url(stock, start_d, end_d)
+        #print(url)
+        data = requests.get(url).text
+        data = pd.read_csv(StringIO(data), index_col='Date', parse_dates=True)
+        #filters for 'close'
+        df_close_prices[stock] = data['Close']
+    #print(df_close_prices)
+    return df_close_prices
+
 def clean_stocks(field, df_temp):
     """ selects specific 'fields' and stores all stocks in single df"""
     #Select field I want and clean the data removing the unwanted fields
@@ -81,7 +107,9 @@ def get_latest_prices(df_close_prices,s):
 def calc_columns(s,df_close_prices):
     """Calculates triggers"""
     print('Searching for stocks to watch/buy')
+    df_close_prices = df_close_prices.sort_index(axis=0, ascending=True)
     for stock in s.symbols:    
+        print('\t' + stock)
         x = (stock +'_EMA_' +str(s.EMA_Sho))
         y = (stock +'_EMA_' +str(s.EMA_Mid))
         z = (stock +'_EMA_' +str(s.EMA_Lon))
@@ -95,7 +123,6 @@ def calc_columns(s,df_close_prices):
         for ema_value in ema_values:
             tage = (stock + '_EMA_' +str(ema_value))
             df_close_prices[tage] = df_close_prices[stock].ewm(span=ema_value, min_periods=ema_value, adjust=False).mean()
-        
         #calc MACD
         macd = ((df_close_prices[z]-df_close_prices[x])/df_close_prices[stock])*100
         df_close_prices[tagm] = macd
@@ -109,6 +136,8 @@ def calc_columns(s,df_close_prices):
         #adding recommend tag
         x = df_close_prices[tagu] +  df_close_prices[tagd].shift(s.ts)
         df_close_prices[tagb] = x
+
+    return df_close_prices
 
 def rec_stocks(s,df_close_prices):
     """Calculates watch/buy stocks only works if last date is today"""
@@ -163,15 +192,15 @@ def save_MACD(df_close_prices):
 def get_stocks(s):
     """embeds >1 functn to download, format and save"""
     #download stocks
-    df_temp = dl_stocks(s,s.st_date,s.ed_date)
+    df_close_prices = dl_stocks_temp(s,s.st_date,s.ed_date)
     #Limit to just close prices in single DF
-    df_close_prices = clean_stocks('Close',df_temp)
+    #df_close_prices = clean_stocks('Close',df_temp)
     #add in todays pricing
     df_close_prices.ix[s.date_now]=lp.get_lp(s)
     #saves to file
     save_MACD(df_close_prices)
     #Calculates EMAs, triggers and watch/buy figures
-    calc_columns(s,df_close_prices)
+    df_close_prices = calc_columns(s,df_close_prices)
     #save copy to Excel
     save_stocks(df_close_prices,'share_test.xlsx')
     print('Completed')

@@ -17,8 +17,8 @@ class Settings():
 
         #FTSE100 Share list the selfsymbols is the active list, switch with symbols2/3 when scaling.
         #added_US and list comprehension to allow for US-based running - DEPRECIATED
-        self.symbols1 = ['ADM']
-        self.symbols2 = ['ADM',	'BA','WOS']
+        self.symbols2 = ['SKG']
+        self.symbols1 = ['ADM',	'BA','WOS']
         self.symbols = ['AAL',	'ABF',	'ADM',	'AHT',	'ANTO',	'AV',	'AZN',	'BA',	'BAB',	'BARC',	'BATS',	'BDEV',	'BLND',	'BLT',	'BNZL',	'BP',	'BRBY',	'BT.A',	'CCH',	'CCL',	'CNA',	'CPG',	'CRDA',	'CRH',	'CTEC',	'DCC',	'DGE',	'DLG',	'EXPN',	'EZJ',	'FRES',	'GFS',	'GKN',	'GLEN',	'GSK',	'HL',	'HMSO',	'HSBA',	'IAG',	'IHG',	'III',	'IMB',	'INF',	'ITRK',	'ITV',	'JMAT',	'KGF',	'LAND',	'LGEN',	'LLOY',	'LSE',	'MCRO',	'MDC',	'MERL',	'MKS',	'MNDI',	'MRW',	'NG',	'NXT',	'OML',	'PPB',	'PRU',	'PSN',	'PSON',	'RB',	'RBS',	'RDSA',	'RDSB',	'REL',	'RIO',	'RMG',	'RR',	'RRS',	'RSA',	'RTO',	'SBRY',	'SDR',	'SGE',	'SGRO',	'SHP',	'SKG',	'SKY',	'SLA',	'SMIN',	'SMT',	'SN',	'SSE',	'STAN',	'STJ',	'SVT',	'TSCO',	'TUI',	'TW','ULVR','UU','VOD','WOS','WPG','WPP','WTB']
         """
         s = ":LON"
@@ -28,8 +28,8 @@ class Settings():
         self.ts=1
         
         #date range for pandas datatable
-        self.st_date = date(2016,1,1)
-        #self.st_date = date.today() - timedelta(days=self.EMA_Lon+365)
+        #self.st_date = date(2015,1,1)
+        self.st_date = date.today() - timedelta(days=self.EMA_Lon+365)
         self.ed_date = date.today().isoformat()
         self.date_now = datetime.combine(date.today(),time())
         
@@ -40,10 +40,11 @@ class Settings():
         #selling triggers
         self.max_days_held = 70
         self.min_days_held = 50
-        self.l_trig1 = 9 #Low sell normally 10
-        self.l_trig2 = 1  #EMA_l switch normally  5-10
+        self.l_trig1 = 10 #Low sell normally 10
+        self.l_trig2 = 7  #EMA_l switch normally  5-10
+        self.l_trig3 = 7 #combined switch and bottom%
         self.min_gain = 4  #price grows at least by...  3-10
-        self.h_trig1 = -3.8   #if iterprice dips X% below ema_S   1-3
+        self.h_trig1 = 2   #if iterprice dips X% below ema_S   1-3
 
     def loop_iter1(self,n):
         self.l_trig1 = n

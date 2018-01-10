@@ -50,7 +50,11 @@ class PortfolioRecord():
                 
                 if iter_date <= df.index.max().date():
                     label_l = self.stock + "_EMA_" + str(sf.s.EMA_Lon)
+                    label_m = self.stock + "_EMA_" + str(sf.s.EMA_Mid)
+                    label_s = self.stock + "_EMA_" + str(sf.s.EMA_Sho)
                     ema_l = df.loc[iter_date,[label_l]].values[0]
+                    ema_m = df.loc[iter_date,[label_m]].values[0]
+                    ema_s = df.loc[iter_date,[label_s]].values[0]
                     iter_price = df.loc[iter_date,[self.stock]].values[0]
                     #print('in trigger loop')
                     #long trigger. stock held for long time
@@ -64,12 +68,18 @@ class PortfolioRecord():
                         sell_type = 'bottom'
                         fill_sale_data(self,iter_price, iter_date, sell_type) 
                         break
-
+                    
                     #low trigger2 - if stock dips x% below ema_Long
-                    elif (iter_price < (ema_l*(1-(sf.s.l_trig2/100)))) and iter_date > sho_s_date:
-                        sell_type = 'low trend'
-                        fill_sale_data(self,iter_price, iter_date, sell_type) 
-                        break
+                    #elif (iter_price < (ema_l*(1-(sf.s.l_trig2/100)))) and iter_date > sho_s_date:
+                    #    sell_type = 'low trend'
+                    #    fill_sale_data(self,iter_price, iter_date, sell_type) 
+                    #    break
+                    
+                    #low trigger3 - if EMAs<EMAm<EMAl and below x%
+                    #elif iter_price < (self.p_price * (1-sf.s.l_trig3/100)) and ema_l>ema_m>ema_s:
+                    #    sell_type = 'EMA_switch low'
+                    #    fill_sale_data(self,iter_price, iter_date, sell_type)
+                    #    break
 
                     #high trigger
                     else:
@@ -98,6 +108,7 @@ class PortfolioRecord():
                     #print('trigger loop after iter_date')  
                 else:
                     #print('end of trigger loop')
+                    self.s_price = iter_price
                     looper = False
                     #print('Date outside of df',iter_date)
                     break

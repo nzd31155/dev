@@ -8,10 +8,8 @@ Can save/export history to excel.abs
 import pandas as pd 
 from datetime import date, datetime, timedelta
 import share_functions as sf
-#from share_settings import Settings
 from portfolio_record import PortfolioRecord
 #global variables
-#s = Settings()
 p = PortfolioRecord
 
 def run_main():
@@ -38,9 +36,8 @@ def create_df(df_rawdata):
     pf_dict = build_portfolio(df_rawdata)
     df = pd.DataFrame(pf_dict).transpose().fillna(0)
     df.columns = ['p_date','stock','p_price','n_stocks','is_held','days_held','s_date','s_price','profit','pctgain','sell_type']
-    #print("bottom sell % =", sf.s.l_trig1, "low trend switch =", sf.s.l_trig2, "Min grow% =", sf.s.min_gain, "H-sell%", sf.s.h_trig1, "Profit =", sum(df.profit),
-    #'Success rate =', (sum(n > 0 for n in df.profit)/(sum(n == False for n in df.is_held))), "N  completed sales  =", sum(n == False for n in df.is_held),
-    #'n held =', sum(n==True for n in df.is_held))    
+    print("bottom sell % =", sf.s.l_trig1, "low trend switch =", sf.s.l_trig2, "EMA switch low = ", sf.s.l_trig3, "Min grow% =", sf.s.min_gain, "H-sell%", sf.s.h_trig1, "Profit =", sum(df.profit),'Success rate =', (sum(n > 0 for n in df.profit)/(sum(n == False for n in df.is_held))), 
+    "N  completed sales  =", sum(n == False for n in df.is_held),'n held =', sum(n==True for n in df.is_held))    
     
     #sorts into chonological order
     df = df.sort_values('p_date', ascending = False)
@@ -52,7 +49,7 @@ def create_df(df_rawdata):
             print('Holds = ', df.loc[df['s_price'] == 0]['stock'].values)    
         else:
             print( "sell the following - ", sell)
-            print('Remaining holds = ', df.loc[df['s_price'] == 0]['stock'].values)
+            print('Remaining holds = ', df.loc[df['s_date'] == 0]['stock'].values)
     except IndexError:
         print('no df error')
 
